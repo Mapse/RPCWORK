@@ -8,7 +8,7 @@
 
 using namespace std;
 
-void printDelt_RE4R2CH20(){
+void delt_RE4R2CH20(){
 
     TTree *tree = new TTree("treedata","Data from csv file"); 
 
@@ -68,7 +68,7 @@ void printDelt_RE4R2CH20(){
 
 }
 
-void printDelt_RE4R2CH15(){
+void delt_RE4R2CH15(){
 
     TTree *tree = new TTree("treedata","Data from csv file"); 
 
@@ -127,7 +127,7 @@ void printDelt_RE4R2CH15(){
 
 }
 
-void printDelt_RE4R2CH14(){
+void delt_RE4R2CH14(){
 
     TTree *tree = new TTree("treedata","Data from csv file"); 
 
@@ -186,7 +186,7 @@ void printDelt_RE4R2CH14(){
 
 }
 
-void printDelt_RE4R2CH13(){
+void delt_RE4R2CH13(){
 
     TTree *tree = new TTree("treedata","Data from csv file"); 
 
@@ -245,7 +245,7 @@ void printDelt_RE4R2CH13(){
 
 }
 
-void printDelt_RE4R2CH12(){
+void delt_RE4R2CH12(){
 
     TTree *tree = new TTree("treedata","Data from csv file"); 
 
@@ -304,7 +304,7 @@ void printDelt_RE4R2CH12(){
 
 }
 
-void printDelt_RE4R2CH10(){
+void delt_RE4R2CH10(){
 
     TTree *tree = new TTree("treedata","Data from csv file"); 
 
@@ -359,6 +359,53 @@ void printDelt_RE4R2CH10(){
     fit->Print();
     gr->Draw("AP");
     canv->SaveAs("Current variation for RE-4_R2_CH10.pdf");
+    
+
+}
+
+void backgrd_Rate(){
+
+    TTree *tree = new TTree("treedata","Data from csv file"); 
+
+    // Uses the Read1File method
+    tree->ReadFile("BackgroundRate.csv","CHAMBER/S,Slope/D,Backrate/D",','); 
+    
+    double Slope, Backrate;  
+    
+    // Setting the variables on tree branches.
+    tree->SetBranchAddress("Slope", &Slope);
+    tree->SetBranchAddress("Backrate", &Backrate);
+    
+    // Number of tree entries, and arrays for voltage and current variation.
+    const auto n = tree->GetEntries();
+    double slop[n];
+    double backrt[n];
+    
+    for (unsigned i = 0; i !=n; ++i){
+        tree->GetEntry(i);
+        slop[i] = Slope;
+        backrt[i] = Backrate;
+        
+    
+    }
+    // Criação do canvas.
+    TCanvas *canv = new TCanvas("Plot", "Slope and background", 700, 600);
+    TGraph *gr = new TGraph(n, backrt, slop);
+    gr ->Draw("ap");
+
+    // Marker style (cross).
+    gr->SetMarkerStyle(47);
+    // Marker size (1 - default).
+    gr->SetMarkerSize(1.2);
+    // Marker color (kpurple=890).
+    gr->SetMarkerColor(890);
+    // Title.
+    gr->SetTitle("Slop of linear fit as a function of the background; Rate Hz/cm^{2}; Slope (#muA/V)");
+
+    // Linear functions for plotting.
+   
+    gr->Draw("AP");
+    canv->SaveAs("Slope x background.pdf");
     
 
 }
